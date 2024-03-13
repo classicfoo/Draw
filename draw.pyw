@@ -161,7 +161,8 @@ class SimpleInkscapeApp:
 
         self.canvas.bind("<Button-1>", self.start_draw_circle)
         self.canvas.bind("<B1-Motion>", self.drawing_circle)
-        self.canvas.bind("<ButtonRelease-1>", self.stop_draw_circle)
+        #self.canvas.bind("<ButtonRelease-1>", self.stop_draw_circle)
+
         # Disable move mode
         self.move_mode = False
 
