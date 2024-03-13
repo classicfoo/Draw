@@ -27,6 +27,8 @@ class SimpleInkscapeApp:
         self.master.bind("<Control-c>", self.copy_selected_shape)
         # Bind Ctrl+V to paste
         self.master.bind("<Control-v>", self.paste_shape)
+        # Bind Delete key to delete selected shapes
+        self.master.bind("<Delete>", self.delete_selected_shapes)
 
     def create_toolbar(self):
         self.toolbar = ttk.Frame(self.master)
@@ -101,19 +103,23 @@ class SimpleInkscapeApp:
         self.canvas.bind("<Button-1>", self.start_draw_line)
         self.canvas.bind("<B1-Motion>", self.drawing_line)
         self.canvas.bind("<ButtonRelease-1>", self.stop_draw_line)
+        
+        # Bind right click to switch to select mode
+        self.canvas.bind("<Button-3>", self.set_select_mode)
+
         # Disable move mode
         self.move_mode = False
 
-    def start_draw_line(self, event):
+    def start_draw_line(self, event=None):
         self.start_x = event.x
         self.start_y = event.y
         self.line = self.canvas.create_line(self.start_x, self.start_y, self.start_x, self.start_y, width=5, fill="black", tags=("line",))
         self.shapes.append(self.line)  # Add the line's item ID to the list of shapes
 
-    def drawing_line(self, event):
+    def drawing_line(self, event=None):
         self.canvas.coords(self.line, self.start_x, self.start_y, event.x, event.y)
 
-    def stop_draw_line(self, event):
+    def stop_draw_line(self, event=None):
         # Reset start_x and start_y instead of unbinding the events
         self.start_x = None
         self.start_y = None
@@ -145,10 +151,14 @@ class SimpleInkscapeApp:
             
     def set_draw_text_mode(self):
         self.canvas.bind("<Button-1>", self.place_text)
+
+        # Bind right click to switch to select mode
+        self.canvas.bind("<Button-3>", self.set_select_mode)
+
         # Disable move mode
         self.move_mode = False
     
-    def place_text(self, event):
+    def place_text(self, event=None):
         text = tkinter.simpledialog.askstring("Text Input", "Enter text:")
         if text:
             text_id = self.canvas.create_text(event.x, event.y, text=text, fill="black", tags=("text_label",), font=("Helvetica", 16))  # Increase font size to 12
@@ -158,24 +168,28 @@ class SimpleInkscapeApp:
         self.canvas.unbind("<Button-1>")
         self.canvas.unbind("<B1-Motion>")
         self.canvas.unbind("<ButtonRelease-1>")
+        self.canvas.bind("<Button-3>")
 
         self.canvas.bind("<Button-1>", self.start_draw_circle)
         self.canvas.bind("<B1-Motion>", self.drawing_circle)
         #self.canvas.bind("<ButtonRelease-1>", self.stop_draw_circle)
+        
+        # Bind right click to switch to select mode
+        self.canvas.bind("<Button-3>", self.set_select_mode)
 
         # Disable move mode
         self.move_mode = False
 
-    def start_draw_circle(self, event):
+    def start_draw_circle(self, event=None):
         self.start_x = event.x
         self.start_y = event.y
         self.circle = self.canvas.create_oval(self.start_x, self.start_y, self.start_x, self.start_y, outline="black", width=5)
         self.shapes.append(self.circle)  # Add the circle's item ID to the list of shapes
 
-    def drawing_circle(self, event):
+    def drawing_circle(self, event=None):
         self.canvas.coords(self.circle, self.start_x, self.start_y, event.x, event.y)
 
-    def stop_draw_circle(self, event):
+    def stop_draw_circle(self, event=None):
         self.canvas.unbind("<Button-1>")
         self.canvas.unbind("<B1-Motion>")
         self.canvas.unbind("<ButtonRelease-1>")
@@ -185,30 +199,35 @@ class SimpleInkscapeApp:
         self.canvas.unbind("<Button-1>")
         self.canvas.unbind("<B1-Motion>")
         self.canvas.unbind("<ButtonRelease-1>")
+        self.canvas.bind("<Button-3>")
 
         self.canvas.bind("<Button-1>", self.start_draw_rectangle)
         self.canvas.bind("<B1-Motion>", self.drawing_rectangle)
         #self.canvas.bind("<ButtonRelease-1>", self.stop_draw_rectangle)
+        
+        # Bind right click to switch to select mode
+        self.canvas.bind("<Button-3>", self.set_select_mode)
 
         # Disable move mode
         self.move_mode = False
     
-    def set_select_mode(self):
+    def set_select_mode(self, event=None):
         self.canvas.bind("<ButtonPress-1>", self.start_selection)
         self.canvas.bind("<B1-Motion>", self.draw_selection)
         self.canvas.bind("<ButtonRelease-1>", self.end_selection)
+
         # Bind right mouse button for moving shapes
         self.canvas.bind("<ButtonPress-3>", self.start_move_with_right_click)
         self.canvas.bind("<B3-Motion>", self.move_shape_with_right_click)
         self.canvas.bind("<ButtonRelease-3>", self.end_move_with_right_click)
         self.move_mode = False
 
-    def start_move_with_right_click(self, event):
+    def start_move_with_right_click(self, event=None):
         if self.selected_shapes:
             self.start_x = event.x
             self.start_y = event.y
 
-    def move_shape_with_right_click(self, event):
+    def move_shape_with_right_click(self, event=None):
         if self.selected_shapes:
             dx = event.x - self.start_x
             dy = event.y - self.start_y
@@ -217,7 +236,7 @@ class SimpleInkscapeApp:
             self.start_x = event.x
             self.start_y = event.y
 
-    def end_move_with_right_click(self, event):
+    def end_move_with_right_click(self, event=None):
         self.start_x = None
         self.start_y = None
     
@@ -228,21 +247,21 @@ class SimpleInkscapeApp:
         # Enable move mode
         self.move_mode = True
 
-    def start_draw_rectangle(self, event):
+    def start_draw_rectangle(self, event=None):
         self.start_x = event.x
         self.start_y = event.y
         shape_id = self.canvas.create_rectangle(self.start_x, self.start_y, event.x, event.y, outline="black", width=5, fill="")
         self.shapes.append(shape_id)
 
-    def drawing_rectangle(self, event):
+    def drawing_rectangle(self, event=None):
         self.canvas.coords(self.shapes[-1], self.start_x, self.start_y, event.x, event.y)
 
-    def stop_draw_rectangle(self, event):
+    def stop_draw_rectangle(self, event=None):
         self.canvas.unbind("<Button-1>")
         self.canvas.unbind("<B1-Motion>")
         self.canvas.unbind("<ButtonRelease-1>")
             
-    def start_selection(self, event):
+    def start_selection(self, event=None):
 
         self.deselect_all()
 
@@ -251,11 +270,11 @@ class SimpleInkscapeApp:
         # Create a rubber band rectangle
         self.selection_rect = self.canvas.create_rectangle(self.start_x, self.start_y, self.start_x, self.start_y, outline="blue", width=5)
 
-    def draw_selection(self, event):
+    def draw_selection(self, event=None):
         # Update the rubber band rectangle as the mouse moves
         self.canvas.coords(self.selection_rect, self.start_x, self.start_y, event.x, event.y)
 
-    def end_selection(self, event):
+    def end_selection(self, event=None):
         # Get the area covered by the rubber band rectangle
         x0, y0, x1, y1 = self.canvas.coords(self.selection_rect)
         # Find all objects within the selection rectangle
@@ -300,12 +319,12 @@ class SimpleInkscapeApp:
         self.canvas.delete(self.selection_rect)
 
         
-    def start_move(self, event):
+    def start_move(self, event=None):
         if self.move_mode:
             self.start_x = event.x
             self.start_y = event.y
 
-    def move_shape(self, event):
+    def move_shape(self, event=None):
         if self.move_mode and self.selected_shapes:
             dx = event.x - self.start_x
             dy = event.y - self.start_y
@@ -315,11 +334,11 @@ class SimpleInkscapeApp:
                 self.start_x = event.x
                 self.start_y = event.y
 
-    def end_move(self, event):
+    def end_move(self, event=None):
         self.start_x = None
         self.start_y = None
 
-    def delete_selected_shapes(self):
+    def delete_selected_shapes(self, event=None):
         for shape_id in self.selected_shapes:
             self.canvas.delete(shape_id)
         self.shapes = [shape_id for shape_id in self.shapes if shape_id not in self.selected_shapes]
@@ -410,12 +429,12 @@ class SimpleInkscapeApp:
         self.set_select_mode()
 
 
-    def copy_selected_shape(self, event):
+    def copy_selected_shape(self, event=None):
         # Copy all selected shapes
         if self.selected_shapes:
             self.copied_shapes = self.selected_shapes.copy()  # Use copy() to avoid aliasing issues
 
-    def paste_shape(self, event):
+    def paste_shape(self, event=None):
         if self.copied_shapes:
             dx, dy = 50, 50  # Offset for pasting
             new_copied_shapes = []  # To store newly created shapes for selection
