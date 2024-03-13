@@ -186,8 +186,24 @@ class SimpleInkscapeApp:
         self.circle = self.canvas.create_oval(self.start_x, self.start_y, self.start_x, self.start_y, outline="black", width=5)
         self.shapes.append(self.circle)  # Add the circle's item ID to the list of shapes
 
+    # drawing oval
     def drawing_circle(self, event=None):
         self.canvas.coords(self.circle, self.start_x, self.start_y, event.x, event.y)
+
+    # draw perfect circle    
+    def drawing_circle(self, event):
+        # Calculate the distance between start point and current mouse position
+        dx = event.x - self.start_x
+        dy = event.y - self.start_y
+        distance = min(dx, dy)  # Ensure the circle fits within the smallest dimension
+        # Calculate the coordinates for the bounding box
+        x0 = self.start_x - distance
+        y0 = self.start_y - distance
+        x1 = self.start_x + distance
+        y1 = self.start_y + distance
+        # Update the circle with the new coordinates
+        self.canvas.coords(self.circle, x0, y0, x1, y1)
+
 
     def stop_draw_circle(self, event=None):
         self.canvas.unbind("<Button-1>")
