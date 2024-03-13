@@ -29,6 +29,15 @@ class SimpleInkscapeApp:
         self.master.bind("<Control-v>", self.paste_shape)
         # Bind Delete key to delete selected shapes
         self.master.bind("<Delete>", self.delete_selected_shapes)
+         # Bind double-click event to activate rename tool for text labels
+        self.canvas.bind("<Double-Button-1>", self.activate_rename_tool)
+
+    def activate_rename_tool(self, event):
+        # Check if the item clicked on is a text label
+        item = self.canvas.find_closest(event.x, event.y)
+        if "text_label" in self.canvas.gettags(item):
+            # Activate the rename tool
+            self.edit_text()
 
     def create_toolbar(self):
         self.toolbar = ttk.Frame(self.master)
