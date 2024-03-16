@@ -254,9 +254,9 @@ class SimpleInkscapeApp:
 
     def move_shape_with_right_click(self, event=None):
         if self.selected_shapes:
-            dx = event.x - self.start_x
-            dy = event.y - self.start_y
             for shape_id in self.selected_shapes:
+                dx = event.x - self.start_x
+                dy = event.y - self.start_y
                 self.canvas.move(shape_id, dx, dy)
             self.start_x = event.x
             self.start_y = event.y
@@ -264,7 +264,7 @@ class SimpleInkscapeApp:
     def end_move_with_right_click(self, event=None):
         self.start_x = None
         self.start_y = None
-    
+
     def set_move_mode(self):
         self.canvas.bind("<ButtonPress-1>", self.start_move)
         self.canvas.bind("<B1-Motion>", self.move_shape)
@@ -300,48 +300,40 @@ class SimpleInkscapeApp:
         self.canvas.coords(self.selection_rect, self.start_x, self.start_y, event.x, event.y)
 
     def end_selection(self, event=None):
-        # Get the area covered by the rubber band rectangle
         x0, y0, x1, y1 = self.canvas.coords(self.selection_rect)
-        # Find all objects within the selection rectangle
         items = self.canvas.find_overlapping(x0, y0, x1, y1)
-        # Determine if any shape or text label within the selection area is already selected
         already_selected = any(item in self.selected_shapes for item in items if item != self.selection_rect)
         
         if already_selected:
-            # If the shape or text label is already selected, deselect only the rubber-banded shape
             for item in items:
                 if item != self.selection_rect and item in self.selected_shapes:
-                    if item in self.shapes:
-                        if "line" in self.canvas.gettags(item):
-                            self.canvas.itemconfig(item, fill="black")
-                        else:
-                            self.canvas.itemconfig(item, outline="black", width=5)
-                    elif self.canvas.type(item) == "text":
-                        self.canvas.itemconfig(item, fill="black")
-                    self.selected_shapes.remove(item)
+                    self.deselect_item(item)
         else:
-            # Otherwise, select all objects within the selection rectangle
             for item in items:
                 if item != self.selection_rect:
-                    if "line" in self.canvas.gettags(item):
-                        self.canvas.itemconfig(item, fill="red")
-                        self.selected_shapes.append(item)
-                    else:
-                        if item in self.shapes:
-                            self.canvas.itemconfig(item, outline="red", width=5)
-                        elif self.canvas.type(item) == "text":
-                            self.canvas.itemconfig(item, fill="red")
-                        self.selected_shapes.append(item)
-                    
-                    # Check if the line intersects with the selection rectangle
-                    if self.canvas.type(item) == "line":
-                        x0_line, y0_line, x1_line, y1_line = self.canvas.coords(item)
-                        if (x0_line > x0 and x0_line < x1 and y0_line > y0 and y0_line < y1) or \
-                        (x1_line > x0 and x1_line < x1 and y1_line > y0 and y1_line < y1):
-                            self.selected_shapes.append(item)
-
-        # Delete the rubber band rectangle
+                    self.select_item(item)
         self.canvas.delete(self.selection_rect)
+
+    def deselect_item(self, item):
+        if item in self.shapes:
+            if "line" in self.canvas.gettags(item):
+                self.canvas.itemconfig(item, fill="black")
+            else:
+                self.canvas.itemconfig(item, outline="black", width=5)
+        elif self.canvas.type(item) == "text":
+            self.canvas.itemconfig(item, fill="black")
+        self.selected_shapes.remove(item)
+
+    def select_item(self, item):
+        if "line" in self.canvas.gettags(item):
+            self.canvas.itemconfig(item, fill="red")
+        else:
+            if item in self.shapes:
+                self.canvas.itemconfig(item, outline="red", width=5)
+            elif self.canvas.type(item) == "text":
+                self.canvas.itemconfig(item, fill="red")
+        if item not in self.selected_shapes:
+            self.selected_shapes.append(item)
 
         
     def start_move(self, event=None):
