@@ -54,30 +54,10 @@ class SimpleInkscapeApp:
         # Draw Text Label Button
         self.text_btn = ttk.Button(self.toolbar, text="Text", command=self.set_draw_text_mode)
         self.text_btn.pack(pady=2)
-        
-        # Rename Button
-        self.rename_btn = ttk.Button(self.toolbar, text="Rename", command=self.edit_text)
-        self.rename_btn.pack(pady=2)
 
         # Draw Line Button
         self.line_btn = ttk.Button(self.toolbar, text="Line", command=self.set_draw_line_mode)
         self.line_btn.pack(pady=2)
-
-        # Select Tool Button
-        self.select_btn = ttk.Button(self.toolbar, text="Select", command=self.set_select_mode)
-        self.select_btn.pack(pady=2)
-
-        # Deselect All Button
-        self.deselect_btn = ttk.Button(self.toolbar, text="Deselect All", command=self.deselect_all)
-        self.deselect_btn.pack(pady=2)
-        
-        # Move Tool Button
-        self.move_btn = ttk.Button(self.toolbar, text="Move", command=self.set_move_mode)
-        self.move_btn.pack(pady=2)
-        
-        # Delete Tool Button
-        self.delete_btn = ttk.Button(self.toolbar, text="Delete", command=self.delete_selected_shapes)
-        self.delete_btn.pack(pady=2)
 
         # Export Button
         self.export_btn = ttk.Button(self.toolbar, text="Export", command=self.export_data)
@@ -90,16 +70,6 @@ class SimpleInkscapeApp:
         # Reset Button
         self.reset_btn = ttk.Button(self.toolbar, text="Reset", command=self.reset_canvas)
         self.reset_btn.pack(pady=2)
-        
-        # Copy Button
-        self.copy_btn = ttk.Button(self.toolbar, text="Copy", command=self.copy_selected_shape)
-        self.copy_btn.pack(pady=2)
-        
-        # Paste Button
-        self.paste_btn = ttk.Button(self.toolbar, text="Paste", command=self.paste_shape)
-        self.paste_btn.pack(pady=2)
-        
-        # Future buttons for other shapes and functionalities
 
     def reset_canvas(self):
         # Clear all shapes, lines, and text labels from the canvas
