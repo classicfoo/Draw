@@ -119,6 +119,8 @@ class SimpleInkscapeApp:
         # Disable move mode
         self.move_mode = False
 
+        self.canvas.config(cursor="crosshair")  
+
     def start_draw_line(self, event=None):
         self.start_x = event.x
         self.start_y = event.y
@@ -166,11 +168,17 @@ class SimpleInkscapeApp:
 
         # Disable move mode
         self.move_mode = False
+
+        self.canvas.config(cursor="xterm")  # Change cursor to text selection cursor
+
     
     def place_text(self, event=None):
         text = tkinter.simpledialog.askstring("Text Input", "Enter text:")
         if text:
             text_id = self.canvas.create_text(event.x, event.y, text=text, fill="black", tags=("text_label",), font=("Helvetica", 16))  # Increase font size to 12
+        
+        # Unbind the left mouse button click event to stop continuous text label drawing
+        self.set_select_mode()
 
     def set_draw_circle_mode(self):
         # Unbind other drawing events
@@ -188,6 +196,9 @@ class SimpleInkscapeApp:
 
         # Disable move mode
         self.move_mode = False
+
+        self.canvas.config(cursor="crosshair")  
+
 
     def start_draw_circle(self, event=None):
         self.start_x = event.x
@@ -233,6 +244,9 @@ class SimpleInkscapeApp:
         # Bind right click to switch to select mode
         self.canvas.bind("<Button-3>", self.set_select_mode)
 
+        self.canvas.config(cursor="crosshair")  
+
+
         # Disable move mode
         self.move_mode = False
     
@@ -246,6 +260,9 @@ class SimpleInkscapeApp:
         self.canvas.bind("<B3-Motion>", self.move_shape_with_right_click)
         self.canvas.bind("<ButtonRelease-3>", self.end_move_with_right_click)
         self.move_mode = False
+
+        self.canvas.config(cursor="arrow")  # Change cursor to move cursor
+
 
     def start_move_with_right_click(self, event=None):
         if self.selected_shapes:
@@ -264,6 +281,7 @@ class SimpleInkscapeApp:
     def end_move_with_right_click(self, event=None):
         self.start_x = None
         self.start_y = None
+        
 
     def set_move_mode(self):
         self.canvas.bind("<ButtonPress-1>", self.start_move)
@@ -313,6 +331,12 @@ class SimpleInkscapeApp:
                 if item != self.selection_rect:
                     self.select_item(item)
         self.canvas.delete(self.selection_rect)
+
+        # After selection, check if there are selected shapes
+        if self.selected_shapes:
+            self.canvas.config(cursor="fleur")  # Change cursor to "fleur" if there are selected shapes
+        else:
+            self.canvas.config(cursor="arrow")  # Keep the default arrow cursor if no shapes are selected
 
     def deselect_item(self, item):
         if item in self.shapes:
